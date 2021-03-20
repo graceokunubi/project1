@@ -13,9 +13,10 @@
                 //Note from Emily Lin: I have converted dates from string to date format, filtered dates 
                 //so that only those between 1/1/2020 and 1/1/2021 show up 
                 
-                //string date 1/23/2017
-                const dateParser = d3.timeParse("%m/%d/%Y");
+                console.log(data); 
 
+                //string date format 1/23/2017
+                const dateParser = d3.timeParse("%m/%d/%Y");
                 data.forEach( d => {
                     d['createddate'] = dateParser(d["createddate"]);
                     d['enddate'] = dateParser(d["enddate"]);
@@ -31,6 +32,10 @@
                 data = data.filter( (d) => {return (d['createddate'] >= new Date("1/1/2020")) && (d['createddate'] < new Date("1/1/2021")) ;}  );
                 
                 console.log(data);
+
+
+                
+                //next steps: filter out data we don't need? i.e. url, poll_id, question_id, etc. 
             
 
         }); 
