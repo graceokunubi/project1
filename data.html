@@ -1,0 +1,40 @@
+<html>
+
+    <head> 
+        <title> Data Cleaning </title>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+    </head>
+
+    <script>
+
+        d3.csv("./approval_polllist.csv", d3.autoType)
+            .then( (data) => { 
+
+                //Note from Emily Lin: I have converted dates from string to date format, filtered dates 
+                //so that only those between 1/1/2020 and 1/1/2021 show up 
+                
+                //string date 1/23/2017
+                const dateParser = d3.timeParse("%m/%d/%Y");
+
+                data.forEach( d => {
+                    d['createddate'] = dateParser(d["createddate"]);
+                    d['enddate'] = dateParser(d["enddate"]);
+                    d['modeldate'] = dateParser(d["modeldate"]); //seems to be date when data model created; probably irrelevant 
+                    d['startdate'] = dateParser(d["startdate"]);
+                });
+
+                // const createdDateExtent = d3.extent(data, d => d['createddate'] );
+                // console.log(createdDateExtent);
+                // // min: Mon Jan 23 2017
+                // // max: Wed Jan 20 2021
+
+                data = data.filter( (d) => {return (d['createddate'] >= new Date("1/1/2020")) && (d['createddate'] < new Date("1/1/2021")) ;}  );
+                
+                console.log(data);
+            
+
+        }); 
+
+    </script>
+
+</html>
