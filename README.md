@@ -44,3 +44,9 @@ Splitting up the Work: Paper
     - Color
     - Shape 
 - What does your visualization tell us? What was surprising about it? What insights do you want to convey to the viewer of your visualization?
+
+
+Tasks
+- Emily X - setting up the axis + scales 
+- Emily L - the visualization aspect of graph
+- Grace - Chunk of the paper 
