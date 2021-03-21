@@ -1,7 +1,7 @@
 <html>
 
     <head> 
-        <title> Data Cleaning </title>
+        <title> Donald Trump 2020 Approval Ratings by Pollster </title>
         <script src="https://d3js.org/d3.v6.min.js"></script>
     </head>
 
@@ -9,9 +9,6 @@
 
         d3.json("./approval_polllist.json", d3.autoType)
             .then( (data) => { 
-                
-                //Note from Emily Lin: I have converted dates from string to date format, filtered dates 
-                //so that only enddates between 1/1/2020 and 1/1/2021 show up 
                 
                 console.log(data); 
 
@@ -29,9 +26,6 @@
                 
                 console.log(data);
 
-                
-                
-                //next steps: filter out data we don't need? i.e. url, poll_id, question_id, etc. 
             
 
         }); 
