@@ -7,7 +7,7 @@
 
     <script>
 
-        d3.csv("./approval_polllist.csv", d3.autoType)
+        d3.json("./approval_polllist.json", d3.autoType)
             .then( (data) => { 
                 
                 //Note from Emily Lin: I have converted dates from string to date format, filtered dates 

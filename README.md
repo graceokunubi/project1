@@ -47,6 +47,6 @@ Splitting up the Work: Paper
 
 
 Tasks
-- Emily X - setting up the axis + scales 
-- Emily L - the visualization aspect of graph
+- Emily X - setting up the axis + scales (by Monday morning)
+- Emily L - the visualization aspect of graph (ideally have line graph by tuesday night, see how much bandwidth you have for scatter)
 - Grace - Chunk of the paper + Aesthetics of the graph
