@@ -18,8 +18,8 @@
                 //string date format 1/23/2017
                 const dateParser = d3.timeParse("%m/%d/%Y");
                 data.forEach( d => {
-                    d['createddate'] = dateParser(d["createddate"]); //we can use this date as the proxy date for the visualization
-                    d['enddate'] = dateParser(d["enddate"]);
+                    d['createddate'] = dateParser(d["createddate"]); 
+                    d['enddate'] = dateParser(d["enddate"]); //we can use this date as the proxy date for the visualization
                     d['modeldate'] = dateParser(d["modeldate"]); //seems to be date when data model created; probably irrelevant 
                     d['startdate'] = dateParser(d["startdate"]);
                 });
@@ -29,8 +29,8 @@
                 // // min: Mon Jan 23 2017
                 // // max: Wed Jan 20 2021
 
-                data = data.filter( (d) => {return (d['createddate'] >= new Date("1/1/2020")) && (d['createddate'] < new Date("1/1/2021")) ;}  );
-                data.sort( (a,b) => d3.ascending(a['createddate'], b['createddate'])); 
+                data = data.filter( (d) => {return (d['enddate'] >= new Date("1/1/2020")) && (d['enddate'] < new Date("1/1/2021")) ;}  );
+                data.sort( (a,b) => d3.ascending(a['enddate'], b['enddate'])); 
                 
                 console.log(data);
 
