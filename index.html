@@ -9,9 +9,9 @@
 
         d3.csv("./approval_polllist.csv", d3.autoType)
             .then( (data) => { 
-
+                
                 //Note from Emily Lin: I have converted dates from string to date format, filtered dates 
-                //so that only those between 1/1/2020 and 1/1/2021 show up 
+                //so that only enddates between 1/1/2020 and 1/1/2021 show up 
                 
                 console.log(data); 
 
@@ -24,17 +24,12 @@
                     d['startdate'] = dateParser(d["startdate"]);
                 });
 
-                // const createdDateExtent = d3.extent(data, d => d['createddate'] );
-                // console.log(createdDateExtent);
-                // // min: Mon Jan 23 2017
-                // // max: Wed Jan 20 2021
-
                 data = data.filter( (d) => {return (d['enddate'] >= new Date("1/1/2020")) && (d['enddate'] < new Date("1/1/2021")) ;}  );
                 data.sort( (a,b) => d3.ascending(a['enddate'], b['enddate'])); 
                 
                 console.log(data);
 
-
+                
                 
                 //next steps: filter out data we don't need? i.e. url, poll_id, question_id, etc. 
             
