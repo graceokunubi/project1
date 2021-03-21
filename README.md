@@ -49,4 +49,4 @@ Splitting up the Work: Paper
 Tasks
 - Emily X - setting up the axis + scales 
 - Emily L - the visualization aspect of graph
-- Grace - Chunk of the paper 
+- Grace - Chunk of the paper + Aesthetics of the graph
