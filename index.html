@@ -17,7 +17,7 @@
     </head>
 
     <body>
-      <svg id="scatterplot" height="400" width="800">
+      <svg id="scatterplot" height="500" width="800">
         //making a big chart because we have a lot of data
       </svg>
 
@@ -29,7 +29,7 @@
         const svg = d3.select("svg#scatterplot");
         const width = svg.attr("width");
         const height = svg.attr("height");
-        const margins = {"top": 10, "right": 10, "bottom": 20, "left": 30};
+        const margins = {"top": 20, "right": 10, "bottom": 20, "left": 40};
           //margins are subject to change later
         const chartWidth = width - margins.left - margins.right;
         const chartHeight = height - margins.top - margins.bottom;
@@ -38,15 +38,6 @@
         let annotations = svg.append("g").attr("id","annotations");
         let chartArea = svg.append("g").attr("id","points")
                     .attr("transform","translate("+margins.left+","+margins.top+")");
-
-        // var borderPath = svg.append("rect")
-        //  .attr("x", 30)
-        //  .attr("y", 10)
-        //  .attr("height", 370)
-        //  .attr("width", 760)
-        //  .style("stroke","black")
-        //  .style("fill", "none")
-        //  .style("stroke-width","1px");
 
 
         d3.json("./approval_polllist.json", d3.autoType)
@@ -62,16 +53,17 @@
                     d['modeldate'] = dateParser(d["modeldate"]); //seems to be date when data model created; probably irrelevant
                     d['startdate'] = dateParser(d["startdate"]);
                 });
-
-                data = data.filter( (d) => {return (d['enddate'] >= new Date("1/1/2020")) && (d['enddate'] < new Date("1/1/2021")) ;}  );
+                
+                //return only data from first day of each month in 2020
+                data = data.filter( (d) => {return (d['enddate'] >= new Date("1/1/2020")) 
+                                            && (d['enddate'] < new Date("1/1/2021")) 
+                                            && (String(d['enddate']).split(" ")[2]=="01");}  )
+                
                 data.sort( (a,b) => d3.ascending(a['enddate'], b['enddate']));
-
                 console.log(data);
 
                 const dateExtent = d3.extent(data, d => d['enddate'] );
-                //I can't remember if we decided on using enddate or startdate but this can be easily changed
-                //console.log(dateExtent);
-                const dateScale = d3.scaleLinear().domain(['1/1/2020','12/31/2020']).range([0,chartWidth]);
+                const dateScale = d3.scaleTime().domain([new Date("12/20/2019"), new Date("12/20/2020")]).range([0,chartWidth]);
                 const approveExtent = d3.extent(data, d => d['adjusted_approve'] );
                 const disapproveExtent = d3.extent(data, d => d['adjusted_disapprove']);
                 //console.log(approveExtent);
@@ -82,11 +74,11 @@
 
                 let leftAxis = d3.axisLeft(scoreScale)
                                   .tickFormat(d3.format("~f"))
-                                  .ticks(12);
+                                  .ticks(11);
                 let leftGridlines = d3.axisLeft(scoreScale)
                                       .tickSize(-chartWidth)
                                       .tickFormat("")
-                                      .ticks(12);
+                                      .ticks(11);
 
                 annotations.append("g")
                   .attr("class", "y axis")
@@ -98,25 +90,52 @@
                   .call(leftGridlines);
 
                 let bottomAxis = d3.axisBottom(dateScale)
-                                   .tickFormat(d3.timeFormat("%m/%d"))
+                                   .tickFormat(d3.timeFormat("%b"))
                                    .ticks(11);
                 let bottomGridlines = d3.axisBottom(dateScale)
                                         .tickSize(-chartHeight)
-                                        .tickFormat("")
-                                        .ticks(11);
+                                        .tickFormat("");
 
                 annotations.append("g")
                   .attr("class", "x axis")
-                  .attr("transform","translate("+margins.left+","+(chartHeight/2+margins.top)+")")
+                  .attr("transform","translate("+(margins.left)+","+(chartHeight/2+margins.top)+")")
+                  //.style("border", "lightgrey")
                   .call(bottomAxis);
 
                 annotations.append("g")
                   .attr("class", "x gridlines")
-                  .attr("transform","translate("+margins.left+","+(chartHeight+margins.top)+")")
+                  .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
                   .call(bottomGridlines);
-
-
                 
+
+                // *********** work in progress
+                
+                var lineGenerator1 = d3.line()
+                                      .x( d => dateScale(d['enddate']) )
+                                      .y( d => scoreScale(d['adjusted_approve']) )
+                                      //.y2( d => scoreScale(d['adjusted_disapprove'] * (-1)) )
+                                      //.curve(d3.curveMonotoneX); 
+
+                var lineGenerator2 = d3.line()
+                                      .x( d => dateScale(d['enddate']) )
+                                      .y( d => scoreScale(d['adjusted_disapprove'] * (-1)) )
+                                      //.curve(d3.curveMonotoneX); 
+
+                chartArea.append("path")
+                          .datum(data)
+                          .attr("class", "line")
+                          .attr("fill", "none")
+                          .attr("stroke", "green")
+                          .attr("stroke-width", 1)
+                          .attr("d", lineGenerator1);
+
+                chartArea.append("path")
+                          .datum(data)
+                          .attr("class", "line")
+                          .attr("fill", "none")
+                          .attr("stroke", "red")
+                          .attr("stroke-width", 1)
+                          .attr("d", lineGenerator2);
 
         });
 
