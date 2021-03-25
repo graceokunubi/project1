@@ -50,12 +50,85 @@
 
         const chartWidth = width - margins.left - margins.right;
         const chartHeight = height - margins.top - margins.bottom;
+        
+        //CODE CITATION:
+        //OLS function sourced from https://dracoblue.net/dev/linear-least-squares-in-javascript/ 
+        //Title: "Linear least squares in Javascript", Author: Draco Blue 
+        function findLineByLeastSquares(values_x, values_y) {
+              var sum_x = 0;
+              var sum_y = 0;
+              var sum_xy = 0;
+              var sum_xx = 0;
+              var count = 0;
+
+              /*
+              * We'll use those variables for faster read/write access.
+              */
+              var x = 0;
+              var y = 0;
+              var values_length = values_x.length;
+
+              if (values_length != values_y.length) {
+                  throw new Error('The parameters values_x and values_y need to have same size!');
+              }
+
+              /*
+              * Nothing to do.
+              */
+              if (values_length === 0) {
+                  return [ [], [] ];
+              }
+
+              /*
+              * Calculate the sum for each of the parts necessary.
+              */
+              for (var v = 0; v < values_length; v++) {
+                  x = values_x[v];
+                  y = values_y[v];
+                  sum_x += x;
+                  sum_y += y;
+                  sum_xx += x*x;
+                  sum_xy += x*y;
+                  count++;
+              }
+
+              /*
+              * Calculate m and b for the formular:
+              * y = x * m + b
+              */
+              var m = (count*sum_xy - sum_x*sum_y) / (count*sum_xx - sum_x*sum_x);
+              var b = (sum_y/count) - (m*sum_x)/count;
+
+              /*
+              * We will make the x and y result line now
+              */
+              var result_values = [];
+              for (var v = 0; v < values_length; v++) {
+                  x = values_x[v];
+                  y = x * m + b;
+                  const obj = {}
+                  obj["x"] = x
+                  obj["y"] = y
+                  result_values.push(obj)
+              }
+
+              return result_values;
+          }
 
 
         d3.json("./trump_processed_data.json", d3.autoType)
             .then( (data) => {
 
               console.log(data);
+              
+              const d1 = []
+              const d2 = []
+              data.forEach( d => {
+                  d1.push(d["adjusted_approve_mean"])
+                  d2.push(d["tweet_count"])
+              });
+              const regressionData = findLineByLeastSquares(d1, d2)
+              console.log(regressionData)
 
               //string date format 1/23/2017
               const dateParser = d3.timeParse("%Y-%m-%d");
@@ -240,16 +313,30 @@
                                             .attr("opacity", 0.7)
                                             .attr("cx", d => scoreScaleX(d["adjusted_approve_mean"]))
                                             .attr("cy", d => tweetCountScaleY(d["tweet_count"]))
-                                            .attr("fill", "blue" )  // refer to scaleOrdinal in scales section
+                                            .attr("fill", "#5D3A9B" )  // refer to scaleOrdinal in scales section
                                             .attr("r", 5)
+
+              var bestFitLineGen = d3.line()
+                  .x( d => scoreScaleX(d["x"]))
+                  .y( d => tweetCountScaleY(d["y"]))
+
+              scatterplotChartArea.append("path")
+                      .datum(regressionData)
+                      .attr("class", "line")
+                      .attr("fill", "none")
+                      .attr("stroke", "#E66100")
+                      .attr("stroke-width", 3)
+                      .attr("d", bestFitLineGen);
             });
+            
       </script>
 
 
-<p id = sources>
-  <h6> Referenced INFO 3300/5100 lecture notes, Stack Overflow, and Pandas documentation to help figure out syntax
-    and various functions in this assignment. 
-  </h6>
+<p id = sources><br></br>
+  <em> Referenced INFO 3300/5100 lecture notes, Stack Overflow, and various documentation sources (Pandas, w3school, mozilla)
+    to help figure out syntax and various functions in this assignment. Ordinary least squares regression line sourced from 
+    Draco Blue via https://dracoblue.net/dev/linear-least-squares-in-javascript/ 
+  </em>
 </p>
     </body>
 
