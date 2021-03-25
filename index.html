@@ -207,6 +207,8 @@
               // *********** work in progress
 
               //trump's approval line
+              //Sourced colors from https://davidmathlogic.com/colorblind/#%23FFC20A-%230C7BDC to ensure color accessibility
+              //Title: "Coloring for Colorblindness", Author: David Nicols
               var approveLineGen = d3.line()
                   .x( d => dateScale(d['date']) )
                   .y( d => scoreScale(d['adjusted_approve_mean']) )
@@ -225,7 +227,7 @@
                       .datum(data)
                       .attr("class", "line")
                       .attr("fill", "none")
-                      .attr("stroke", "blue")
+                      .attr("stroke", "#0C7BDC")
                       .attr("stroke-width", 3)
                       .attr("d", approveLineGen);
 
@@ -240,7 +242,7 @@
                       .datum(data)
                       .attr("class", "line")
                       .attr("fill", "none")
-                      .attr("stroke", "orange")
+                      .attr("stroke", "#FFC20A")
                       .attr("stroke-width", 3)
                       .attr("d", tweetCountLineGen);
               
@@ -335,7 +337,8 @@
 <p id = sources><br></br>
   <em> Referenced INFO 3300/5100 lecture notes, Stack Overflow, and various documentation sources (Pandas, w3school, mozilla)
     to help figure out syntax and various functions in this assignment. Ordinary least squares regression line sourced from 
-    Draco Blue via https://dracoblue.net/dev/linear-least-squares-in-javascript/ 
+    Draco Blue via https://dracoblue.net/dev/linear-least-squares-in-javascript/. Colors sourced from David Nichols via 
+    https://davidmathlogic.com/colorblind/#%23FFC20A-%230C7BDC. 
   </em>
 </p>
     </body>
