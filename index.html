@@ -1,7 +1,7 @@
 <html>
 
     <head>
-        <title> Donald Trump 2020 Approval Ratings vs. Twitter Activity </title>
+        <title> Donald Trump Approval Ratings vs. Twitter Activity Over Presidency </title>
         <script src="https://d3js.org/d3.v6.min.js"></script>
         <style>
 
@@ -19,27 +19,37 @@
     <body>
       <h2> Project 1 </h2>
 
-      <h4> Donald Trump 2020 Approval Ratings vs. Twitter Activity </h4>
+      <h4> Donald Trump Approval Ratings vs. Twitter Activity Over Presidency </h4>
+      <svg id="linegraph" height="500" width="800">
+      </svg>  <br></br>
+
+     <h4> Donald Trump Approval Ratings vs. Twitter Activity</h4>
       <svg id="scatterplot" height="500" width="800">
       </svg>
 
-      <!-- <div id="scatterLegend" class="legend"> </div> -->
       <script>
 
         var data;
-        const svg = d3.select("svg#scatterplot");
-        // const svglegent = d3.select("svg#scatterLegend");
+
+        //linegraph
+        const svg = d3.select("svg#linegraph");
         const width = svg.attr("width");
         const height = svg.attr("height");
         const margins = {"top": 10, "right": 40, "bottom": 20, "left": 40};
-          //margins are subject to change later
+
+        let lineAnnotations = svg.append("g").attr("id","annotations");
+        let lineChartArea = svg.append("g").attr("id","points")
+                    .attr("transform","translate("+margins.left+","+margins.top+")");
+
+        //scatterplot 
+        const svg1 = d3.select("svg#scatterplot");
+
+        let scatterplotAnnotations = svg1.append("g").attr("id","annotations");
+        let scatterplotChartArea = svg1.append("g").attr("id","points")
+                    .attr("transform","translate("+margins.left+","+margins.top+")");
+
         const chartWidth = width - margins.left - margins.right;
         const chartHeight = height - margins.top - margins.bottom;
-
-
-        let annotations = svg.append("g").attr("id","annotations");
-        let chartArea = svg.append("g").attr("id","points")
-                    .attr("transform","translate("+margins.left+","+margins.top+")");
 
 
         d3.json("./trump_processed_data.json", d3.autoType)
@@ -51,18 +61,7 @@
               const dateParser = d3.timeParse("%Y-%m-%d");
               data.forEach( d => {
                   d['date'] = dateParser(d["Date"].split(" ")[0]);
-                  // d['enddate'] = dateParser(d["enddate"]); //we can use this date as the proxy date for the visualization
-                  // d['modeldate'] = dateParser(d["modeldate"]); //seems to be date when data model created; probably irrelevant
-                  // d['startdate'] = dateParser(d["startdate"]);
               });
-              
-              //return only data from first day of each month in 2020
-              // data = data.filter( (d) => {return (d['enddate'] >= new Date("1/1/2020")) 
-              //                             && (d['enddate'] < new Date("1/1/2021")) 
-              //                             && (String(d['enddate']).split(" ")[2]=="01");}  )
-              
-              // data.sort( (a,b) => d3.ascending(a['enddate'], b['enddate']));
-              // console.log(data);
 
               const dateExtent = d3.extent(data, d => d['date'] );
               console.log(dateExtent)
@@ -73,11 +72,17 @@
               //console.log(disapproveExtent);
               const scoreScale = d3.scaleLinear().domain([30,50])
                                     .range([chartHeight, 0]);
+
+              const scoreScaleX = d3.scaleLinear().domain([30,50])
+              .range([0, chartWidth]);
               
               const tweetCountExtent = d3.extent(data, d => d['tweet_count'])
               console.log(tweetCountExtent);
               const tweetCountScale = d3.scaleLinear().domain([0, 1000])
                                       .range([chartHeight, 0]);
+
+              const tweetCountScaleY = d3.scaleLinear().domain([0, 1000])
+              .range([chartHeight,0]);
 
               
               //approval ratings axis
@@ -89,11 +94,11 @@
                                     .tickFormat("")
                                     .ticks(11);
 
-              annotations.append("g")
+             lineAnnotations.append("g")
                 .attr("class", "y axis")
                 .attr("transform","translate("+(margins.left)+","+(margins.top)+")")
                 .call(leftAxis);
-              annotations.append("g")
+              lineAnnotations.append("g")
                 .attr("class", "y gridlines")
                 .attr("transform","translate("+(margins.left)+","+margins.top+")")
                 .call(leftGridlines);
@@ -103,7 +108,7 @@
                                 .tickFormat(d3.format("~f"))
                                 .ticks(11);
 
-              annotations.append("g")
+              lineAnnotations.append("g")
                 .attr("class", "y axis")
                 .attr("transform","translate("+(width-margins.right)+","+(margins.top)+")")
                 .call(rightAxis);
@@ -116,13 +121,13 @@
                                       .tickSize(-chartHeight)
                                       .tickFormat("");
 
-              annotations.append("g")
+              lineAnnotations.append("g")
                 .attr("class", "x axis")
                 .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
                 //.style("border", "lightgrey")
                 .call(bottomAxis);
 
-              annotations.append("g")
+              lineAnnotations.append("g")
                 .attr("class", "x gridlines")
                 .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
                 .call(bottomGridlines);
@@ -135,7 +140,7 @@
                   .x( d => dateScale(d['date']) )
                   .y( d => scoreScale(d['adjusted_approve_mean']) )
             
-              chartArea.append("path")
+              lineChartArea.append("path")
                       .datum(data)
                       .attr("fill", "#B0E2FF")
                       .attr("opacity", 0.5)
@@ -145,7 +150,7 @@
                         .y1(d => scoreScale(d['adjusted_approve_max']))
                         )
 
-              chartArea.append("path")
+              lineChartArea.append("path")
                       .datum(data)
                       .attr("class", "line")
                       .attr("fill", "none")
@@ -160,7 +165,7 @@
                   .y( d => tweetCountScale(d['tweet_count']) )
 
 
-              chartArea.append("path")
+              lineChartArea.append("path")
                       .datum(data)
                       .attr("class", "line")
                       .attr("fill", "none")
@@ -190,9 +195,66 @@
                  .attr("y", 430)
                  .text("Tweet Count")
                  .style("font-size", "15px")
-                 .attr("alignment-baseline","middle")                    
-                  
+                 .attr("alignment-baseline","middle")           
+                 
+                 
 
+
+
+
+
+            //scatterplot 
+
+            let leftAxisScatter = d3.axisLeft(tweetCountScaleY)
+                                .tickFormat(d3.format("~f"))
+                                .ticks(11);
+            let leftGridlinesScatter = d3.axisLeft(tweetCountScaleY)
+                                    .tickSize(-chartWidth)
+                                    .tickFormat("")
+                                    .ticks(11);
+
+             scatterplotAnnotations.append("g")
+                .attr("class", "y axis")
+                .attr("transform","translate("+(margins.left)+","+(margins.top)+")")
+                .call(leftAxisScatter);
+             scatterplotAnnotations.append("g")
+                .attr("class", "y gridlines")
+                .attr("transform","translate("+(margins.left)+","+margins.top+")")
+                .call(leftGridlinesScatter);
+
+
+             let bottomAxisScatter = d3.axisBottom(scoreScaleX)
+                                  .tickFormat(d3.format("~f"))
+                                  .ticks(11);
+             let bottomGridlinesScatter = d3.axisBottom(scoreScaleX)
+                                      .tickSize(-chartHeight)
+                                      .tickFormat("");
+
+             scatterplotAnnotations.append("g")
+                .attr("class", "x axis")
+                .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
+                .call(bottomAxisScatter);
+
+             scatterplotAnnotations.append("g")
+                .attr("class", "x gridlines")
+                .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
+                .call(bottomGridlinesScatter);
+              
+            //  scatterplotChartArea.selectAll("circle")
+            //     .join("circle")
+            //     .attr("cx", d => scoreScaleX(d["adjusted_approve_mean"]))
+            //     .attr("cy", d => tweetCountScaleY(d["tweet_count"]))
+            //     .attr("r",2)
+            //     .style("fill","blue")
+
+             let circles = scatterplotChartArea.selectAll("circle.datapoint").data(data)
+                                            .join("circle")
+                                            .attr("class", "datapoint")
+                                            .attr("opacity", 0.7)
+                                            .attr("cx", d => scoreScaleX(d["adjusted_approve_mean"]))
+                                            .attr("cy", d => tweetCountScaleY(d["tweet_count"]))
+                                            .attr("fill", "blue" )  // refer to scaleOrdinal in scales section
+                                            .attr("r", 5)
             });
 
       </script>
