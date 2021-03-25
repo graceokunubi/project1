@@ -50,3 +50,8 @@ together_df.rename(columns={"index":"Date"}, inplace=True)
 together_df["Date"] = together_df["Date"].apply(str) #we want date instead of unixtime in json
 together_df.columns=["Date","adjusted_approve_max","adjusted_approve_min","adjusted_approve_mean","tweet_count"]
 together_df.to_json(r'trump_processed_data.json', orient="records")
+
+
+### Sources: 
+#referenced pandas documentation and stack overflow to help figure out various syntax and 
+#functions used in this script. 

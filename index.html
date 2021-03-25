@@ -67,9 +67,7 @@
               console.log(dateExtent)
               const dateScale = d3.scaleTime().domain(dateExtent).range([0,chartWidth]);
               const approveExtent = d3.extent(data, d => d['adjusted_approve_mean'] ); 
-              //const disapproveExtent = d3.extent(data, d => d['adjusted_disapprove']);
               console.log(approveExtent);
-              //console.log(disapproveExtent);
               const scoreScale = d3.scaleLinear().domain([30,50])
                                     .range([chartHeight, 0]);
 
@@ -197,10 +195,6 @@
                  .style("font-size", "15px")
                  .attr("alignment-baseline","middle")           
                  
-                 
-
-
-
 
 
             //scatterplot 
@@ -239,13 +233,6 @@
                 .attr("class", "x gridlines")
                 .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
                 .call(bottomGridlinesScatter);
-              
-            //  scatterplotChartArea.selectAll("circle")
-            //     .join("circle")
-            //     .attr("cx", d => scoreScaleX(d["adjusted_approve_mean"]))
-            //     .attr("cy", d => tweetCountScaleY(d["tweet_count"]))
-            //     .attr("r",2)
-            //     .style("fill","blue")
 
              let circles = scatterplotChartArea.selectAll("circle.datapoint").data(data)
                                             .join("circle")
@@ -256,8 +243,14 @@
                                             .attr("fill", "blue" )  // refer to scaleOrdinal in scales section
                                             .attr("r", 5)
             });
-
       </script>
+
+
+<p id = sources>
+  <h6> Referenced INFO 3300/5100 lecture notes, Stack Overflow, and Pandas documentation to help figure out syntax
+    and various functions in this assignment. 
+  </h6>
+</p>
     </body>
 
 </html>
