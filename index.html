@@ -1,7 +1,7 @@
 <html>
 
     <head>
-        <title> Donald Trump 2020 Approval Ratings by Pollster </title>
+        <title> Donald Trump 2020 Approval Ratings vs. Twitter Activity </title>
         <script src="https://d3js.org/d3.v6.min.js"></script>
         <style>
 
@@ -17,19 +17,21 @@
     </head>
 
     <body>
+      <h2> Project 1 </h2>
+
+      <h4> Donald Trump 2020 Approval Ratings vs. Twitter Activity </h4>
       <svg id="scatterplot" height="500" width="800">
-        //making a big chart because we have a lot of data
       </svg>
 
-      <div id="scatterLegend" class="legend"> </div>
-
+      <!-- <div id="scatterLegend" class="legend"> </div> -->
       <script>
 
         var data;
         const svg = d3.select("svg#scatterplot");
+        // const svglegent = d3.select("svg#scatterLegend");
         const width = svg.attr("width");
         const height = svg.attr("height");
-        const margins = {"top": 20, "right": 10, "bottom": 20, "left": 40};
+        const margins = {"top": 10, "right": 40, "bottom": 20, "left": 40};
           //margins are subject to change later
         const chartWidth = width - margins.left - margins.right;
         const chartHeight = height - margins.top - margins.bottom;
@@ -40,104 +42,142 @@
                     .attr("transform","translate("+margins.left+","+margins.top+")");
 
 
-        d3.json("./approval_polllist.json", d3.autoType)
+        d3.json("./trump_processed_data.json", d3.autoType)
             .then( (data) => {
 
-                console.log(data);
+              console.log(data);
 
-                //string date format 1/23/2017
-                const dateParser = d3.timeParse("%m/%d/%Y");
-                data.forEach( d => {
-                    d['createddate'] = dateParser(d["createddate"]);
-                    d['enddate'] = dateParser(d["enddate"]); //we can use this date as the proxy date for the visualization
-                    d['modeldate'] = dateParser(d["modeldate"]); //seems to be date when data model created; probably irrelevant
-                    d['startdate'] = dateParser(d["startdate"]);
-                });
-                
-                //return only data from first day of each month in 2020
-                data = data.filter( (d) => {return (d['enddate'] >= new Date("1/1/2020")) 
-                                            && (d['enddate'] < new Date("1/1/2021")) 
-                                            && (String(d['enddate']).split(" ")[2]=="01");}  )
-                
-                data.sort( (a,b) => d3.ascending(a['enddate'], b['enddate']));
-                console.log(data);
+              //string date format 1/23/2017
+              const dateParser = d3.timeParse("%Y-%m-%d");
+              data.forEach( d => {
+                  d['date'] = dateParser(d["Date"].split(" ")[0]);
+                  // d['enddate'] = dateParser(d["enddate"]); //we can use this date as the proxy date for the visualization
+                  // d['modeldate'] = dateParser(d["modeldate"]); //seems to be date when data model created; probably irrelevant
+                  // d['startdate'] = dateParser(d["startdate"]);
+              });
+              
+              //return only data from first day of each month in 2020
+              // data = data.filter( (d) => {return (d['enddate'] >= new Date("1/1/2020")) 
+              //                             && (d['enddate'] < new Date("1/1/2021")) 
+              //                             && (String(d['enddate']).split(" ")[2]=="01");}  )
+              
+              // data.sort( (a,b) => d3.ascending(a['enddate'], b['enddate']));
+              // console.log(data);
 
-                const dateExtent = d3.extent(data, d => d['enddate'] );
-                const dateScale = d3.scaleTime().domain([new Date("12/20/2019"), new Date("12/20/2020")]).range([0,chartWidth]);
-                const approveExtent = d3.extent(data, d => d['adjusted_approve'] );
-                const disapproveExtent = d3.extent(data, d => d['adjusted_disapprove']);
-                //console.log(approveExtent);
-                //console.log(disapproveExtent);
-                const scoreScale = d3.scaleLinear().domain([-70,70])
-                                     .range([chartHeight, 0]);
-                                     //domain based on largest disapproval and approval
+              const dateExtent = d3.extent(data, d => d['date'] );
+              console.log(dateExtent)
+              const dateScale = d3.scaleTime().domain(dateExtent).range([0,chartWidth]);
+              const approveExtent = d3.extent(data, d => d['adjusted_approve_mean'] ); 
+              //const disapproveExtent = d3.extent(data, d => d['adjusted_disapprove']);
+              console.log(approveExtent);
+              //console.log(disapproveExtent);
+              const scoreScale = d3.scaleLinear().domain([30,50])
+                                    .range([chartHeight, 0]);
+              
+              const tweetCountExtent = d3.extent(data, d => d['tweet_count'])
+              console.log(tweetCountExtent);
+              const tweetCountScale = d3.scaleLinear().domain([0, 1000])
+                                      .range([chartHeight, 0]);
 
-                let leftAxis = d3.axisLeft(scoreScale)
-                                  .tickFormat(d3.format("~f"))
+              
+              //approval ratings axis
+              let leftAxis = d3.axisLeft(scoreScale)
+                                .tickFormat(d3.format("~f"))
+                                .ticks(11);
+              let leftGridlines = d3.axisLeft(scoreScale)
+                                    .tickSize(-chartWidth)
+                                    .tickFormat("")
+                                    .ticks(11);
+
+              annotations.append("g")
+                .attr("class", "y axis")
+                .attr("transform","translate("+(margins.left)+","+(margins.top)+")")
+                .call(leftAxis);
+              annotations.append("g")
+                .attr("class", "y gridlines")
+                .attr("transform","translate("+(margins.left)+","+margins.top+")")
+                .call(leftGridlines);
+
+              //number of tweets axis
+              let rightAxis = d3.axisRight(tweetCountScale)
+                                .tickFormat(d3.format("~f"))
+                                .ticks(11);
+
+              annotations.append("g")
+                .attr("class", "y axis")
+                .attr("transform","translate("+(width-margins.right)+","+(margins.top)+")")
+                .call(rightAxis);
+
+
+              let bottomAxis = d3.axisBottom(dateScale)
+                                  .tickFormat(d3.timeFormat("%b"))
                                   .ticks(11);
-                let leftGridlines = d3.axisLeft(scoreScale)
-                                      .tickSize(-chartWidth)
-                                      .tickFormat("")
-                                      .ticks(11);
+              let bottomGridlines = d3.axisBottom(dateScale)
+                                      .tickSize(-chartHeight)
+                                      .tickFormat("");
 
-                annotations.append("g")
-                  .attr("class", "y axis")
-                  .attr("transform","translate("+(margins.left)+","+(margins.top)+")")
-                  .call(leftAxis);
-                annotations.append("g")
-                  .attr("class", "y gridlines")
-                  .attr("transform","translate("+(margins.left)+","+margins.top+")")
-                  .call(leftGridlines);
+              annotations.append("g")
+                .attr("class", "x axis")
+                .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
+                //.style("border", "lightgrey")
+                .call(bottomAxis);
 
-                let bottomAxis = d3.axisBottom(dateScale)
-                                   .tickFormat(d3.timeFormat("%b"))
-                                   .ticks(11);
-                let bottomGridlines = d3.axisBottom(dateScale)
-                                        .tickSize(-chartHeight)
-                                        .tickFormat("");
+              annotations.append("g")
+                .attr("class", "x gridlines")
+                .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
+                .call(bottomGridlines);
+              
 
-                annotations.append("g")
-                  .attr("class", "x axis")
-                  .attr("transform","translate("+(margins.left)+","+(chartHeight/2+margins.top)+")")
-                  //.style("border", "lightgrey")
-                  .call(bottomAxis);
+              // *********** work in progress
 
-                annotations.append("g")
-                  .attr("class", "x gridlines")
-                  .attr("transform","translate("+(margins.left)+","+(chartHeight+margins.top)+")")
-                  .call(bottomGridlines);
-                
+              //trump's approval line
+              var approveLineGen = d3.line()
+                  .x( d => dateScale(d['date']) )
+                  .y( d => scoreScale(d['adjusted_approve_mean']) )
+            
+              chartArea.append("path")
+                      .datum(data)
+                      .attr("fill", "#B0E2FF")
+                      .attr("opacity", 0.5)
+                      .attr("d", d3.area()
+                        .x(d => dateScale(d["date"]))
+                        .y0(d => scoreScale(d["adjusted_approve_min"]))
+                        .y1(d => scoreScale(d['adjusted_approve_max']))
+                        )
 
-                // *********** work in progress
-                
-                var lineGenerator1 = d3.line()
-                                      .x( d => dateScale(d['enddate']) )
-                                      .y( d => scoreScale(d['adjusted_approve']) )
-                                      //.y2( d => scoreScale(d['adjusted_disapprove'] * (-1)) )
-                                      //.curve(d3.curveMonotoneX); 
+              chartArea.append("path")
+                      .datum(data)
+                      .attr("class", "line")
+                      .attr("fill", "none")
+                      .attr("stroke", "blue")
+                      .attr("stroke-width", 3)
+                      .attr("d", approveLineGen);
 
-                var lineGenerator2 = d3.line()
-                                      .x( d => dateScale(d['enddate']) )
-                                      .y( d => scoreScale(d['adjusted_disapprove'] * (-1)) )
-                                      //.curve(d3.curveMonotoneX); 
 
-                chartArea.append("path")
-                          .datum(data)
-                          .attr("class", "line")
-                          .attr("fill", "none")
-                          .attr("stroke", "green")
-                          .attr("stroke-width", 1)
-                          .attr("d", lineGenerator1);
+              //trump's tweet count line
+              var tweetCountLineGen = d3.line()
+                  .x( d => dateScale(d['date']) )
+                  .y( d => tweetCountScale(d['tweet_count']) )
 
-                chartArea.append("path")
-                          .datum(data)
-                          .attr("class", "line")
-                          .attr("fill", "none")
-                          .attr("stroke", "red")
-                          .attr("stroke-width", 1)
-                          .attr("d", lineGenerator2);
 
-        });
+              chartArea.append("path")
+                      .datum(data)
+                      .attr("class", "line")
+                      .attr("fill", "none")
+                      .attr("stroke", "orange")
+                      .attr("stroke-width", 3)
+                      .attr("d", tweetCountLineGen);
+
+              // legend = chartArea.append("g")
+              //             .attr("class","legend")
+              //             .attr("transform","translate(50,30)")
+              //             .style("font-size",12)
+              //             .call(d3.legend)
+
+                    
+                  
+
+            });
 
       </script>
     </body>
