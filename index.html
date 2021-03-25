@@ -167,14 +167,30 @@
                       .attr("stroke", "orange")
                       .attr("stroke-width", 3)
                       .attr("d", tweetCountLineGen);
-
-              // legend = chartArea.append("g")
-              //             .attr("class","legend")
-              //             .attr("transform","translate(50,30)")
-              //             .style("font-size",12)
-              //             .call(d3.legend)
-
-                    
+              
+              //legend
+              svg.append("circle")
+                 .attr("cx",600)
+                 .attr("cy",410)
+                 .attr("r", 6)
+                 .style("fill", "blue")
+              svg.append("circle")
+                 .attr("cx",600)
+                 .attr("cy",430)
+                 .attr("r", 6)
+                 .style("fill", "orange")
+              svg.append("text")
+                 .attr("x", 620)
+                 .attr("y", 410)
+                 .text("Approval Score")
+                 .style("font-size", "15px")
+                 .attr("alignment-baseline","middle")
+              svg.append("text")
+                 .attr("x", 620)
+                 .attr("y", 430)
+                 .text("Tweet Count")
+                 .style("font-size", "15px")
+                 .attr("alignment-baseline","middle")                    
                   
 
             });
