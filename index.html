@@ -246,7 +246,7 @@
                 .attr("x",0 - (chartHeight / 2))
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
-                .text("Approval Score");  
+                .text("Approval Ratings");  
               
               svg.append("text")
                 .attr("transform", "rotate(90)")
@@ -261,7 +261,7 @@
                                   "translate(" + (width/2) + " ," + 
                                                 (chartHeight + margins.top+40) + ")")
                             .style("text-anchor", "middle")
-                            .text("Approval Score");
+                            .text("Approval Ratings");
               
               svg1.append("text")
                 .attr("transform", "rotate(-90)")
@@ -282,29 +282,42 @@
                       .datum(data)
                       .attr("class", "line")
                       .attr("fill", "none")
-                      .attr("stroke", "#FFC20A")
+                      .attr("stroke", "orange")
                       .attr("stroke-width", 3)
                       .attr("d", tweetCountLineGen);
               
               //legend
               svg.append("circle")
-                 .attr("cx",600)
-                 .attr("cy",410)
+                 .attr("cx",550)
+                 .attr("cy",390)
                  .attr("r", 6)
                  .style("fill", "blue")
               svg.append("circle")
-                 .attr("cx",600)
+                 .attr("cx",550)
                  .attr("cy",430)
                  .attr("r", 6)
                  .style("fill", "orange")
+              svg.append("circle")
+                 .attr("cx",550)
+                 .attr("cy",410)
+                 .attr("r", 6)
+                 .style("fill", "#B0E2FF")
+                 .style("stroke", "grey")
+                 .style("stroke-width", 2)
               svg.append("text")
-                 .attr("x", 620)
-                 .attr("y", 410)
-                 .text("Approval Score")
+                 .attr("x", 570)
+                 .attr("y", 390)
+                 .text("Approval Ratings")
                  .style("font-size", "15px")
                  .attr("alignment-baseline","middle")
               svg.append("text")
-                 .attr("x", 620)
+                 .attr("x", 570)
+                 .attr("y", 410)
+                 .text("Approval Ratings Range")
+                 .style("font-size", "15px")
+                 .attr("alignment-baseline","middle")     
+              svg.append("text")
+                 .attr("x", 570)
                  .attr("y", 430)
                  .text("Tweet Count")
                  .style("font-size", "15px")
