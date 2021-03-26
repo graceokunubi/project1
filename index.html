@@ -168,7 +168,7 @@
 
              lineAnnotations.append("g")
                 .attr("class", "y axis")
-                .attr("transform","translate("+(margins.left)+","+(margins.top)+")")
+                .attr("transform","translate("+(margins.left-1)+","+(margins.top)+")")
                 .call(leftAxis);
               lineAnnotations.append("g")
                 .attr("class", "y gridlines")
