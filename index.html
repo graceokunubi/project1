@@ -141,18 +141,19 @@
               const dateScale = d3.scaleTime().domain(dateExtent).range([0,chartWidth]);
               const approveExtent = d3.extent(data, d => d['adjusted_approve_mean'] ); 
               console.log(approveExtent);
-              const scoreScale = d3.scaleLinear().domain([30,50])
+              const scoreScale = d3.scaleLinear().domain([30,55])
                                     .range([chartHeight, 0]);
 
-              const scoreScaleX = d3.scaleLinear().domain([30,50])
+              const scoreScaleX = d3.scaleLinear().domain([30,55])
               .range([0, chartWidth]);
               
               const tweetCountExtent = d3.extent(data, d => d['tweet_count'])
               console.log(tweetCountExtent);
-              const tweetCountScale = d3.scaleLinear().domain([0, 1000])
+              
+              const tweetCountScale = d3.scaleLinear().domain([0, 1100])
                                       .range([chartHeight, 0]);
 
-              const tweetCountScaleY = d3.scaleLinear().domain([0, 1000])
+              const tweetCountScaleY = d3.scaleLinear().domain([0, 1100])
               .range([chartHeight,0]);
 
               
@@ -246,7 +247,7 @@
                 .attr("x",0 - (chartHeight / 2))
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
-                .text("Approval Ratings");  
+                .text("Approval Ratings (%)");  
               
               svg.append("text")
                 .attr("transform", "rotate(90)")
@@ -261,7 +262,7 @@
                                   "translate(" + (width/2) + " ," + 
                                                 (chartHeight + margins.top+40) + ")")
                             .style("text-anchor", "middle")
-                            .text("Approval Ratings");
+                            .text("Approval Ratings (%)");
               
               svg1.append("text")
                 .attr("transform", "rotate(-90)")
@@ -313,7 +314,7 @@
               svg.append("text")
                  .attr("x", 570)
                  .attr("y", 410)
-                 .text("Approval Ratings Range")
+                 .text("Approval Ratings Range (%)")
                  .style("font-size", "15px")
                  .attr("alignment-baseline","middle")     
               svg.append("text")
